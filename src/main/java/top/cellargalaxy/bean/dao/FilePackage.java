@@ -1,4 +1,4 @@
-package top.cellargalaxy.bean;
+package top.cellargalaxy.bean.dao;
 
 import java.io.File;
 import java.util.Date;

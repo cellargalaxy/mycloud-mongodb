@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.stereotype.Repository;
-import top.cellargalaxy.bean.FilePackage;
+import top.cellargalaxy.bean.dao.FilePackage;
 import top.cellargalaxy.util.FilePackageUtil;
 
 import java.io.*;
@@ -93,6 +93,12 @@ public class DaoMongo implements Dao {
 		return gridFSDBFileToFilePackage(gridFSDBFile);
 	}
 	
+	/**
+	 * http://www.cnblogs.com/amosli/p/3480676.html
+	 * @param off
+	 * @param len
+	 * @return
+	 */
 	@Override
 	public FilePackage[] selectFilePackageInfos(int off, int len) {
 		DB db = mongodbfactory.getDb();
