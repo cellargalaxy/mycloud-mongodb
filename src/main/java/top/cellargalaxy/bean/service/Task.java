@@ -1,7 +1,9 @@
 package top.cellargalaxy.bean.service;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import top.cellargalaxy.bean.dao.FilePackage;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -14,18 +16,25 @@ public class Task {
 	private Date pathDate;
 	private String description;
 	private String taskName;
-	private String exception;
+	private String log;
 	private boolean success;
 	
 	public Task() {
 	}
 	
-	public Task(String targetName, Date pathDate, String description, String taskName, String exception, boolean success) {
+	public Task(String targetName, Date pathDate, String description, String taskName, String log, boolean success) {
 		this.targetName = targetName;
+		if (pathDate == null) {
+			try {
+				pathDate = FilePackage.DATE_FORMAT.parse(FilePackage.DATE_FORMAT.format(new Date()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
 		this.pathDate = pathDate;
 		this.description = description;
 		this.taskName = taskName;
-		this.exception = exception;
+		this.log = log;
 		this.success = success;
 	}
 	
@@ -61,12 +70,12 @@ public class Task {
 		this.taskName = taskName;
 	}
 	
-	public String getException() {
-		return exception;
+	public String getLog() {
+		return log;
 	}
 	
-	public void setException(String exception) {
-		this.exception = exception;
+	public void setLog(String log) {
+		this.log = log;
 	}
 	
 	public boolean isSuccess() {
@@ -84,7 +93,7 @@ public class Task {
 				", pathDate=" + pathDate +
 				", description='" + description + '\'' +
 				", taskName='" + taskName + '\'' +
-				", exception='" + exception + '\'' +
+				", log='" + log + '\'' +
 				", success=" + success +
 				'}';
 	}

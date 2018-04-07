@@ -49,10 +49,10 @@ public class FileTask extends AbstractTaskExecute {
 				setSuccess((filePackage = filePackageDao.insertFilePackage(filePackage)) != null);
 			}
 			if (filePackage != null) {
-				setException(filePackage.toString());
+				setLog(filePackage.toString());
 			}
 		} catch (Exception e) {
-			setException(ExceptionUtil.pringException(e));
+			setLog(ExceptionUtil.pringException(e));
 			setSuccess(false);
 			tmpFile.delete();
 		}

@@ -92,7 +92,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 		} else if (filePackage.getPathDate() != null && filePackage.getFilename() != null) {
 			GridFS gridFS = getGridFS();
 			DBObject dbObject = new BasicDBObject();
-			dbObject.put(METADATA_NAME+'.'+PATH_DATE_NAME, filePackage.getPathDate());
+			dbObject.put(METADATA_NAME + '.' + PATH_DATE_NAME, filePackage.getPathDate());
 			dbObject.put(FILENAME_NAME, filePackage.getFilename());
 			gridFS.remove(dbObject);
 			return true;
@@ -130,7 +130,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 	public FilePackage[] selectFilePackageInfos(int off, int len) {
 		DB db = getGridFS().getDB();
 		DBCollection collection = db.getCollection(COLLECTION_NAME);
-		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(METADATA_NAME+'.'+PATH_DATE_NAME, -1));
+		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(METADATA_NAME + '.' + PATH_DATE_NAME, -1));
 		FilePackage[] filePackages = new FilePackage[dbCursor.size()];
 		int i = 0;
 		for (DBObject dbObject : dbCursor.toArray()) {
@@ -157,7 +157,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 	private FilePackage dbObjectToFilePackage(DBObject dbObject) {
 		DBObject metadata = (DBObject) dbObject.get(METADATA_NAME);
 		Date pathDate = (Date) metadata.get(PATH_DATE_NAME);
-		String description = metadata.get(DESCRIPTION_NAME).toString();
+		String description = metadata.get(DESCRIPTION_NAME) != null ? metadata.get(DESCRIPTION_NAME).toString() : null;
 		String filename = dbObject.get(FILENAME_NAME).toString();
 		DateFormat dateFormat = new SimpleDateFormat(mycloudConfiguration.getDateFormat());
 		return new FilePackage(
@@ -166,7 +166,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 				description,
 				dbObject.get(ID_NAME).toString(),
 				(Date) dbObject.get(UPLOAD_DATE_NAME),
-				dbObject.get(CONTENT_TYPE_NAME).toString(),
+				dbObject.get(CONTENT_TYPE_NAME) != null ? dbObject.get(CONTENT_TYPE_NAME).toString() : null,
 				dbObject.get(MD5_NAME).toString(),
 				FilePackageUtil.createUrl(mycloudConfiguration.getUrlRootPath(), dateFormat, pathDate, filename));
 	}
@@ -204,7 +204,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 			gridFSDBFile = gridFS.findOne(new BasicDBObject(ID_NAME, new ObjectId(filePackage.getId())));
 		} else if (filePackage.getPathDate() != null && filePackage.getFilename() != null) {
 			DBObject dbObject = new BasicDBObject();
-			dbObject.put(METADATA_NAME+'.'+PATH_DATE_NAME, filePackage.getPathDate());
+			dbObject.put(METADATA_NAME + '.' + PATH_DATE_NAME, filePackage.getPathDate());
 			dbObject.put(FILENAME_NAME, filePackage.getFilename());
 			gridFSDBFile = gridFS.findOne(dbObject);
 		}
@@ -221,7 +221,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 		FilePackage info = new FilePackage(
 				FilePackageUtil.createFile(new File(mycloudConfiguration.getDriveRootPath()), dateFormat, pathDate, filename),
 				pathDate,
-				gridFSDBFile.getMetaData().get(DESCRIPTION_NAME).toString(),
+				gridFSDBFile.getMetaData().get(DESCRIPTION_NAME) != null ? gridFSDBFile.getMetaData().get(DESCRIPTION_NAME).toString() : null,
 				gridFSDBFile.getId().toString(),
 				gridFSDBFile.getUploadDate(),
 				gridFSDBFile.getContentType(),

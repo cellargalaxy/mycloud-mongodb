@@ -94,7 +94,7 @@ public class MycloudImpl implements Mycloud {
 	
 	@Override
 	public FilePackage findFilePackage(String id) {
-		return filePackageDao.insertFilePackage(
+		return filePackageDao.selectFilePackageInfo(
 				new FilePackage(
 						null,
 						null,
@@ -108,7 +108,7 @@ public class MycloudImpl implements Mycloud {
 	
 	@Override
 	public FilePackage findFilePackage(Date pathDate, String filename) {
-		return filePackageDao.insertFilePackage(
+		return filePackageDao.selectFilePackageInfo(
 				new FilePackage(
 						new File(filename),
 						pathDate,

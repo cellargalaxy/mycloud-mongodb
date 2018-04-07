@@ -53,9 +53,11 @@ public class HttpTask extends AbstractTaskExecute {
 				setTaskName(INSERT_TASK_NAME);
 				setSuccess((filePackage = filePackageDao.insertFilePackage(filePackage)) != null);
 			}
-			setException(filePackage.toString());
+			if (filePackage!=null) {
+				setLog(filePackage.toString());
+			}
 		} catch (Exception e) {
-			setException(ExceptionUtil.pringException(e));
+			setLog(ExceptionUtil.pringException(e));
 			setSuccess(false);
 			if (file != null) {
 				file.delete();

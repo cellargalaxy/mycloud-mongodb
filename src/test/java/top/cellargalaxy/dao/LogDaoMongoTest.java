@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import top.cellargalaxy.bean.service.Task;
+import top.cellargalaxy.service.FileTask;
 
+import java.io.File;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -17,6 +20,9 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class LogDaoMongoTest {
+	
+	
+	
 	@Test
 	public void selectTaskCount() throws Exception {
 		System.out.println(logDao.selectTaskCount());
@@ -27,8 +33,8 @@ public class LogDaoMongoTest {
 	
 	@Test
 	public void insertTask() throws Exception {
-		for (int i = 0; i < 10; i++) {
-			Task task=new Task("target"+i,new Date(),"des"+i,"insert"+i,"exc"+i,true);
+		for (int i = 0; i < 1; i++) {
+			Task task=new FileTask(new File(i+".jpg"),new Date(),"des"+i,"type"+i,null,null,null);
 			System.out.println(logDao.insertTask(task));
 		}
 	}

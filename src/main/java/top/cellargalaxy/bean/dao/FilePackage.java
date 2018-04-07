@@ -1,12 +1,18 @@
 package top.cellargalaxy.bean.dao;
 
+import javafx.scene.input.DataFormat;
+
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by cellargalaxy on 18-4-6.
  */
 public class FilePackage {
+	public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	private final File file;
 	private final Date pathDate;
 	private final String filename;
@@ -20,6 +26,13 @@ public class FilePackage {
 	
 	public FilePackage(File file, Date pathDate, String description, String id, Date uploadDate, String contentType, String md5, String url) {
 		this.file = file;
+		if (pathDate == null) {
+			try {
+				pathDate = DATE_FORMAT.parse(DATE_FORMAT.format(new Date()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
 		this.pathDate = pathDate;
 		this.description = description;
 		this.id = id;
@@ -27,8 +40,8 @@ public class FilePackage {
 		this.contentType = contentType;
 		this.md5 = md5;
 		this.url = url;
-		filename = file.getName();
-		length = file.length();
+		filename = file != null ? file.getName() : null;
+		length = file != null ? file.length() : 0;
 	}
 	
 	public File getFile() {

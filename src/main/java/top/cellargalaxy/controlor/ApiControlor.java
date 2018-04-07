@@ -26,9 +26,6 @@ public class ApiControlor {
 	public ReturnBean upload(@RequestParam("file") MultipartFile multipartFile,
 	                         @RequestParam(value = "pathDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date pathDate,
 	                         @RequestParam(value = "description", required = false) String description) {
-		if (pathDate == null) {
-			pathDate = new Date();
-		}
 		File tmpFile = saveFile(multipartFile);
 		if (tmpFile == null) {
 			return new ReturnBean(false, "空文件");
@@ -42,9 +39,6 @@ public class ApiControlor {
 	public ReturnBean upload(@RequestParam(value = "httpUrl") String httpUrl,
 	                         @RequestParam(value = "pathDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date pathDate,
 	                         @RequestParam(value = "description", required = false) String description) {
-		if (pathDate == null) {
-			pathDate = new Date();
-		}
 		mycloud.addFilePackageTask(httpUrl.trim(), pathDate, description);
 		return new ReturnBean(true, "已添加到队列：" + httpUrl);
 	}
