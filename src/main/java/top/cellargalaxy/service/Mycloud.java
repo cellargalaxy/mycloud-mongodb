@@ -3,6 +3,7 @@ package top.cellargalaxy.service;
 import org.springframework.stereotype.Service;
 import top.cellargalaxy.bean.controlor.Page;
 import top.cellargalaxy.bean.dao.FilePackage;
+import top.cellargalaxy.bean.service.Task;
 
 import java.io.File;
 import java.util.Date;
@@ -20,7 +21,7 @@ public interface Mycloud {
 	
 	boolean removeFilePackage(Date pathDate, String filename);
 	
-	Page[] createPages(int page);
+	Page[] createFilePackagePages(int page);
 	
 	FilePackage findFilePackage(String id);
 	
@@ -28,5 +29,7 @@ public interface Mycloud {
 	
 	FilePackage[] findFilePackages(int page);
 	
+	Page[] createTaskPages(int page);
 	
+	Task[] findTasks(int page);
 }

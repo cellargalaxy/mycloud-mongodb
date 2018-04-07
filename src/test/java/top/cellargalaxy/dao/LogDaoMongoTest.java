@@ -17,6 +17,11 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class LogDaoMongoTest {
+	@Test
+	public void selectTaskCount() throws Exception {
+		System.out.println(logDao.selectTaskCount());
+	}
+	
 	@Autowired
 	private LogDao logDao;
 	

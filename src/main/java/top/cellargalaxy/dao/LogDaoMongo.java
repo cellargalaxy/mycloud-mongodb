@@ -36,6 +36,13 @@ public class LogDaoMongo implements LogDao {
 	}
 	
 	@Override
+	public int selectTaskCount() {
+		DB db = mongoTemplate.getDb();
+		DBCollection collection = db.getCollection(Task.class.getAnnotation(Document.class).collection());
+		return (int) collection.count();
+	}
+	
+	@Override
 	public Task[] selectTasks(int off, int len) {
 		DB db = mongoTemplate.getDb();
 		DBCollection collection = db.getCollection(Task.class.getAnnotation(Document.class).collection());

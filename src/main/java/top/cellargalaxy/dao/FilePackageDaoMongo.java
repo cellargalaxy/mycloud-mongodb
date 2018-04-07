@@ -39,7 +39,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 	
 	public GridFS getGridFS() {
 		if (gridFS == null) {
-			synchronized (gridFS) {
+			synchronized (this) {
 				if (gridFS == null) {
 					gridFS = new GridFS(mongodbfactory.getDb());
 				}
@@ -98,6 +98,13 @@ public class FilePackageDaoMongo implements FilePackageDao {
 			return true;
 		}
 		return true;
+	}
+	
+	@Override
+	public int selectFilePackageCount() {
+		DB db = getGridFS().getDB();
+		DBCollection collection = db.getCollection(COLLECTION_NAME);
+		return (int) collection.count();
 	}
 	
 	@Override

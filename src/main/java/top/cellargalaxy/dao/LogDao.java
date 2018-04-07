@@ -10,5 +10,7 @@ import top.cellargalaxy.bean.service.Task;
 public interface LogDao {
 	Task insertTask(Task task);
 	
+	int selectTaskCount();
+	
 	Task[] selectTasks(int off, int len);
 }

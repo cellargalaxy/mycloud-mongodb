@@ -37,6 +37,7 @@ public class FileTask extends AbstractTaskExecute {
 			File file = FilePackageUtil.createFile(driveRootFolder, dateFormat, getPathDate(), tmpFile.getName());
 			if (!tmpFile.getAbsolutePath().equals(file.getAbsolutePath())) {
 				file.delete();
+				file.getParentFile().mkdirs();
 				tmpFile.renameTo(file);
 			}
 			FilePackage filePackage = new FilePackage(file, getPathDate(), getDescription(), null, null, contentType, null, null);
@@ -47,10 +48,13 @@ public class FileTask extends AbstractTaskExecute {
 				setTaskName(INSERT_TASK_NAME);
 				setSuccess((filePackage = filePackageDao.insertFilePackage(filePackage)) != null);
 			}
-			setException(filePackage.toString());
+			if (filePackage != null) {
+				setException(filePackage.toString());
+			}
 		} catch (Exception e) {
 			setException(ExceptionUtil.pringException(e));
 			setSuccess(false);
+			tmpFile.delete();
 		}
 	}
 }

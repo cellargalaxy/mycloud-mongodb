@@ -12,6 +12,8 @@ public interface FilePackageDao {
 	
 	boolean deleteFilePackage(FilePackage filePackage);
 	
+	int selectFilePackageCount();
+	
 	FilePackage selectFilePackageInfo(FilePackage filePackage);
 	
 	FilePackage[] selectFilePackageInfos(int off, int len);

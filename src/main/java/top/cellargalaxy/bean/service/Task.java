@@ -7,8 +7,9 @@ import java.util.Date;
 /**
  * Created by cellargalaxy on 18-4-7.
  */
-@Document(collection = "log")
+@Document(collection = Task.COLLECTION)
 public class Task {
+	public static final String COLLECTION ="log";
 	private String targetName;
 	private Date pathDate;
 	private String description;

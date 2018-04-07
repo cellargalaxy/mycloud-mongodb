@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import top.cellargalaxy.bean.dao.FilePackage;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Date;
 @SpringBootTest
 public class FilePackageDaoMongoTest {
 	@Autowired
-	private FilePackageDao dao;
+	private FilePackageDao filePackageDao;
 	
 	
 	@Test
@@ -31,7 +32,7 @@ public class FilePackageDaoMongoTest {
 				"type",
 				"md5",
 				"url");
-		FilePackage filePackage1 = dao.insertFilePackage(filePackage);
+		FilePackage filePackage1 = filePackageDao.insertFilePackage(filePackage);
 		System.out.println(filePackage1);
 		Assert.assertEquals(true, filePackage1 != null);
 	}
@@ -46,25 +47,25 @@ public class FilePackageDaoMongoTest {
 				"type",
 				"md5",
 				"url");
-		Assert.assertEquals(true, dao.deleteFilePackage(filePackage));
+		Assert.assertEquals(true, filePackageDao.deleteFilePackage(filePackage));
 	}
 	
 	@Test
 	public void selectFilePackageInfo() throws Exception {
-		FilePackage filePackage = new FilePackage(new File("/home/cellargalaxy/picture/选区_001.png"),
+		FilePackage filePackage = new FilePackage(new File("/home/cellargalaxy/picture/20170513213439.jpg"),
 				new Date(),
 				"des",
-				"5ac7487083c69f24920bb41b",
-				new Date(),
+				null,
+				new SimpleDateFormat("yyyy-MM-dd").parse("2017-09-09"),
 				"type",
 				"md5",
 				"url");
-		System.out.println(dao.selectFilePackageInfo(filePackage));
+		System.out.println(filePackageDao.selectFilePackageInfo(filePackage));
 	}
 	
 	@Test
 	public void selectFilePackageInfos() throws Exception {
-		FilePackage[] filePackages = dao.selectFilePackageInfos(1, 1);
+		FilePackage[] filePackages = filePackageDao.selectFilePackageInfos(1, 1);
 		for (FilePackage filePackage : filePackages) {
 			System.out.println(filePackage);
 		}
@@ -72,7 +73,7 @@ public class FilePackageDaoMongoTest {
 	
 	@Test
 	public void selectAllFilePackageInfo() throws Exception {
-		FilePackage[] filePackages = dao.selectAllFilePackageInfo();
+		FilePackage[] filePackages = filePackageDao.selectAllFilePackageInfo();
 		for (FilePackage filePackage : filePackages) {
 			System.out.println(filePackage);
 		}
@@ -88,7 +89,7 @@ public class FilePackageDaoMongoTest {
 				"type1",
 				"md5",
 				"url2");
-		FilePackage filePackage1 = dao.selectFilePackageSave(filePackage);
+		FilePackage filePackage1 = filePackageDao.selectFilePackageSave(filePackage);
 		System.out.println(filePackage1);
 		Assert.assertEquals(true, filePackage1 != null);
 	}
@@ -103,7 +104,7 @@ public class FilePackageDaoMongoTest {
 				"type1",
 				"md5",
 				"url2");
-		FilePackage filePackage1 = dao.updateFilePackage(filePackage);
+		FilePackage filePackage1 = filePackageDao.updateFilePackage(filePackage);
 		System.out.println(filePackage1);
 		Assert.assertEquals(true, filePackage1 != null);
 	}

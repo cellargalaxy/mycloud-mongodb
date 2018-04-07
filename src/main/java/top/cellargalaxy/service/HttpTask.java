@@ -37,13 +37,14 @@ public class HttpTask extends AbstractTaskExecute {
 	
 	@Override
 	public void executeTask() {
+		File file = null;
 		try {
 			URL url = new URL(httpUrl);
 			HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 			httpURLConnection.setConnectTimeout(connectTimeout);
 			httpURLConnection.setReadTimeout(readTimeout);
 			File pathFolder = FilePackageUtil.createPathFolder(driveRootFolder, dateFormat, getPathDate());
-			File file = UrlDownloadUtil.downloadHttp(httpURLConnection, pathFolder);
+			file = UrlDownloadUtil.downloadHttp(httpURLConnection, pathFolder);
 			FilePackage filePackage = new FilePackage(file, getPathDate(), getDescription(), null, null, httpURLConnection.getContentType(), null, null);
 			if (filePackageDao.selectFilePackageInfo(filePackage) != null) {
 				setTaskName(UPDATE_TASK_NAME);
@@ -56,6 +57,9 @@ public class HttpTask extends AbstractTaskExecute {
 		} catch (Exception e) {
 			setException(ExceptionUtil.pringException(e));
 			setSuccess(false);
+			if (file != null) {
+				file.delete();
+			}
 		}
 	}
 }
