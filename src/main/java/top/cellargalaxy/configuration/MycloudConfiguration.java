@@ -3,6 +3,9 @@ package top.cellargalaxy.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 /**
  * Created by cellargalaxy on 18-4-6.
  */
@@ -18,8 +21,8 @@ public class MycloudConfiguration {
 	private String driveRootPath;
 	@Value("${urlRootPath}")
 	private String urlRootPath;
-	@Value("${dataFormat:yyyyMM/dd}")
-	private String dataFormat;
+	@Value("${dateFormat:yyyyMM/dd}")
+	private String dateFormat;
 	@Value("${connectTimeout:5000}")
 	private int connectTimeout;
 	@Value("${readTimeout:10000}")
@@ -65,12 +68,12 @@ public class MycloudConfiguration {
 		this.urlRootPath = urlRootPath;
 	}
 	
-	public String getDataFormat() {
-		return dataFormat;
+	public String getDateFormat() {
+		return dateFormat;
 	}
 	
-	public void setDataFormat(String dataFormat) {
-		this.dataFormat = dataFormat;
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
 	}
 	
 	public int getConnectTimeout() {

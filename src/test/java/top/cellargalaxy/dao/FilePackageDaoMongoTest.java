@@ -16,9 +16,9 @@ import java.util.Date;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class DaoMongoTest {
+public class FilePackageDaoMongoTest {
 	@Autowired
-	private Dao dao;
+	private FilePackageDao dao;
 	
 	
 	@Test

@@ -9,9 +9,11 @@ import java.util.Date;
 public class FilePackage {
 	private final File file;
 	private final Date pathDate;
+	private final String filename;
 	private final String description;
 	private final String id;
 	private final Date uploadDate;
+	private final long length;
 	private final String contentType;
 	private final String md5;
 	private final String url;
@@ -25,14 +27,8 @@ public class FilePackage {
 		this.contentType = contentType;
 		this.md5 = md5;
 		this.url = url;
-	}
-	
-	public String getFilename() {
-		return file.getName();
-	}
-	
-	public long getFileLength() {
-		return file.length();
+		filename = file.getName();
+		length = file.length();
 	}
 	
 	public File getFile() {
@@ -41,6 +37,10 @@ public class FilePackage {
 	
 	public Date getPathDate() {
 		return pathDate;
+	}
+	
+	public String getFilename() {
+		return filename;
 	}
 	
 	public String getDescription() {
@@ -53,6 +53,10 @@ public class FilePackage {
 	
 	public Date getUploadDate() {
 		return uploadDate;
+	}
+	
+	public long getLength() {
+		return length;
 	}
 	
 	public String getContentType() {
@@ -71,12 +75,12 @@ public class FilePackage {
 	public String toString() {
 		return "FilePackage{" +
 				"file=" + file +
-				", filename='" + file.getName() + '\'' +
-				", fileLength=" + file.length() +
 				", pathDate=" + pathDate +
+				", filename='" + filename + '\'' +
 				", description='" + description + '\'' +
 				", id='" + id + '\'' +
 				", uploadDate=" + uploadDate +
+				", length=" + length +
 				", contentType='" + contentType + '\'' +
 				", md5='" + md5 + '\'' +
 				", url='" + url + '\'' +

@@ -7,7 +7,7 @@ import top.cellargalaxy.bean.dao.FilePackage;
  * Created by cellargalaxy on 18-4-6.
  */
 @Repository
-public interface Dao {
+public interface FilePackageDao {
 	FilePackage insertFilePackage(FilePackage filePackage);
 	
 	boolean deleteFilePackage(FilePackage filePackage);

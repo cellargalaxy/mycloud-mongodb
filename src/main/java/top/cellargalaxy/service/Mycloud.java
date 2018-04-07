@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Service
 public interface Mycloud {
-	void addFilePackageTask(File tmpFile, Date pathDate, String description);
+	void addFilePackageTask(File tmpFile, Date pathDate, String description, String contentType);
 	
 	void addFilePackageTask(String httpUrl, Date pathDate, String description);
 	

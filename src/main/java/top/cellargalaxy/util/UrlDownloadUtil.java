@@ -2,22 +2,42 @@ package top.cellargalaxy.util;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.UUID;
 
 /**
  * Created by cellargalaxy on 18-4-6.
  */
 public class UrlDownloadUtil {
-	public static final File httpDownload(String httpUrl, File folder, int connectTimeout, int readTimeout) throws IOException {
-		if (httpUrl == null || httpUrl.length() == 0 || folder == null) {
+	public static final File downloadHttp(HttpURLConnection httpURLConnection, File folder) {
+		if (httpURLConnection == null || folder == null) {
 			return null;
 		}
-		HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(httpUrl).openConnection();
-		httpURLConnection.setConnectTimeout(connectTimeout);
-		httpURLConnection.setReadTimeout(readTimeout);
+		String filename = getHttpFilename(httpURLConnection);
+		File file = new File(folder.getAbsolutePath() + File.separator + filename);
+		if (file.getParentFile() != null) {
+			file.getParentFile().mkdirs();
+		} else {
+			folder.mkdirs();
+		}
+		try (InputStream inputStream = httpURLConnection.getInputStream();
+		     OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+			byte[] bytes = new byte[1024];
+			int len;
+			while ((len = inputStream.read(bytes, 0, bytes.length)) != -1) {
+				outputStream.write(bytes, 0, len);
+			}
+		} finally {
+			return file;
+		}
+	}
+	
+	public static final String getHttpFilename(HttpURLConnection httpURLConnection) {
+		if (httpURLConnection == null) {
+			return null;
+		}
 		String filename = httpURLConnection.getHeaderField("Content-Disposition");
 		if (filename == null) {
+			String httpUrl = httpURLConnection.getURL().toString();
 			int index = httpUrl.lastIndexOf('#');
 			if (index != -1) {
 				httpUrl = httpUrl.substring(0, index);
@@ -41,20 +61,6 @@ public class UrlDownloadUtil {
 		if (filename == null || filename.length() == 0) {
 			filename = UUID.randomUUID().toString();
 		}
-		File file = new File(folder.getAbsolutePath() + File.separator + filename);
-		folder.mkdirs();
-		try (InputStream inputStream = httpURLConnection.getInputStream();
-		     OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-			byte[] bytes = new byte[1024];
-			int len;
-			while ((len = inputStream.read(bytes, 0, bytes.length)) != -1) {
-				outputStream.write(bytes, 0, len);
-			}
-		} catch (FileNotFoundException e) {
-			throw e;
-		} catch (IOException e) {
-			throw e;
-		}
-		return file;
+		return filename;
 	}
 }
