@@ -146,7 +146,7 @@ public class MycloudImpl implements Mycloud {
 		AbstractTaskExecute abstractTaskExecute;
 		while ((abstractTaskExecute = abstractTaskExecutes.poll()) != null) {
 			abstractTaskExecute.executeTask();
-//			logDao.insertTask(abstractTaskExecute);
+			logDao.insertTask(abstractTaskExecute);
 			System.out.println(abstractTaskExecute);
 		}
 	}

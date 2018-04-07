@@ -24,11 +24,12 @@ public class FilePackageDaoMongoTest {
 	
 	@Test
 	public void insertFilePackage() throws Exception {
-		FilePackage filePackage = new FilePackage(new File("/home/cellargalaxy/picture/fanart_oshino_shinobu_by_huykho192-d7mqdpp.png"),
-				new Date(),
+		FilePackage filePackage = new FilePackage(
+				new File("/home/cellargalaxy/picture/20170513213439.jpg"),
+				new SimpleDateFormat("yyyy-MM-dd").parse("2017-09-09"),
 				"des",
-				"id",
-				new Date(),
+				null,
+				null,
 				"type",
 				"md5",
 				"url");
@@ -52,11 +53,12 @@ public class FilePackageDaoMongoTest {
 	
 	@Test
 	public void selectFilePackageInfo() throws Exception {
-		FilePackage filePackage = new FilePackage(new File("/home/cellargalaxy/picture/20170513213439.jpg"),
-				new Date(),
+		FilePackage filePackage = new FilePackage(
+				new File("/home/cellargalaxy/picture/20170513213439.jpg"),
+				new SimpleDateFormat("yyyy-MM-dd").parse("2017-09-09"),
 				"des",
 				null,
-				new SimpleDateFormat("yyyy-MM-dd").parse("2017-09-09"),
+				null,
 				"type",
 				"md5",
 				"url");
@@ -65,7 +67,7 @@ public class FilePackageDaoMongoTest {
 	
 	@Test
 	public void selectFilePackageInfos() throws Exception {
-		FilePackage[] filePackages = filePackageDao.selectFilePackageInfos(1, 1);
+		FilePackage[] filePackages = filePackageDao.selectFilePackageInfos(0, 20);
 		for (FilePackage filePackage : filePackages) {
 			System.out.println(filePackage);
 		}
@@ -81,10 +83,10 @@ public class FilePackageDaoMongoTest {
 	
 	@Test
 	public void selectFilePackageSave() throws Exception {
-		FilePackage filePackage = new FilePackage(new File("/home/cellargalaxy/picture/test.png"),
+		FilePackage filePackage = new FilePackage(new File("/home/cellargalaxy/picture/20170513213439.jpg"),
 				new Date(),
 				"des2",
-				"5ac74c4483c69f277d562dbd",
+				"5ac897be83c69f6cbc674874",
 				new Date(),
 				"type1",
 				"md5",

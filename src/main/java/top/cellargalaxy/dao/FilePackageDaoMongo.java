@@ -92,7 +92,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 		} else if (filePackage.getPathDate() != null && filePackage.getFilename() != null) {
 			GridFS gridFS = getGridFS();
 			DBObject dbObject = new BasicDBObject();
-			dbObject.put(PATH_DATE_NAME, filePackage.getPathDate());
+			dbObject.put(METADATA_NAME+'.'+PATH_DATE_NAME, filePackage.getPathDate());
 			dbObject.put(FILENAME_NAME, filePackage.getFilename());
 			gridFS.remove(dbObject);
 			return true;
@@ -130,7 +130,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 	public FilePackage[] selectFilePackageInfos(int off, int len) {
 		DB db = getGridFS().getDB();
 		DBCollection collection = db.getCollection(COLLECTION_NAME);
-		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(PATH_DATE_NAME, -1));
+		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(METADATA_NAME+'.'+PATH_DATE_NAME, -1));
 		FilePackage[] filePackages = new FilePackage[dbCursor.size()];
 		int i = 0;
 		for (DBObject dbObject : dbCursor.toArray()) {
@@ -204,7 +204,7 @@ public class FilePackageDaoMongo implements FilePackageDao {
 			gridFSDBFile = gridFS.findOne(new BasicDBObject(ID_NAME, new ObjectId(filePackage.getId())));
 		} else if (filePackage.getPathDate() != null && filePackage.getFilename() != null) {
 			DBObject dbObject = new BasicDBObject();
-			dbObject.put(PATH_DATE_NAME, filePackage.getPathDate());
+			dbObject.put(METADATA_NAME+'.'+PATH_DATE_NAME, filePackage.getPathDate());
 			dbObject.put(FILENAME_NAME, filePackage.getFilename());
 			gridFSDBFile = gridFS.findOne(dbObject);
 		}
