@@ -1,7 +1,7 @@
 package top.cellargalaxy.dao;
 
 import org.springframework.stereotype.Repository;
-import top.cellargalaxy.bean.service.Task;
+import top.cellargalaxy.bean.dao.Task;
 
 /**
  * Created by cellargalaxy on 18-4-7.

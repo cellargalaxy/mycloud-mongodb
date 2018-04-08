@@ -9,8 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.util.Date;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by cellargalaxy on 18-4-7.
  */
@@ -21,7 +19,7 @@ public class MycloudImplTest {
 	private Mycloud mycloud;
 	@Test
 	public void addFilePackageTask() throws Exception {
-		mycloud.addFilePackageTask(new File("/home/cellargalaxy/picture/GreatWallMilkyWay_Yu_1686.jpg"),new Date(),"des","jpg");
+		mycloud.addFile(new File("/home/cellargalaxy/picture/GreatWallMilkyWay_Yu_1686.jpg"),new Date(),"des","jpg");
 //		Thread.sleep(1000*10);
 	}
 	

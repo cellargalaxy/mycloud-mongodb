@@ -1,19 +1,25 @@
 package top.cellargalaxy.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import top.cellargalaxy.bean.controlor.Page;
 import top.cellargalaxy.bean.dao.FilePackage;
-import top.cellargalaxy.bean.service.Task;
+import top.cellargalaxy.bean.dao.Task;
 import top.cellargalaxy.configuration.MycloudConfiguration;
 import top.cellargalaxy.dao.FilePackageDao;
 import top.cellargalaxy.dao.LogDao;
+import top.cellargalaxy.util.FilePackageUtil;
+import top.cellargalaxy.util.FileUtil;
+import top.cellargalaxy.util.PageUtil;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -21,161 +27,159 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Service
 public class MycloudImpl implements Mycloud {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	private FilePackageDao filePackageDao;
 	@Autowired
 	private LogDao logDao;
-	private final MycloudConfiguration mycloudConfiguration;
 	private final File driveRootFolder;
 	private final DateFormat dateFormat;
+	private final String urlRootPath;
+	private final int listFileLength;
+	private final int pagesLength;
+	private final int connectTimeout;
+	private final int readTimeout;
 	private final LinkedBlockingQueue<AbstractTaskExecute> abstractTaskExecutes;
 	
 	@Autowired
 	public MycloudImpl(MycloudConfiguration mycloudConfiguration) {
-		this.mycloudConfiguration = mycloudConfiguration;
-		abstractTaskExecutes = new LinkedBlockingQueue<>();
 		driveRootFolder = new File(mycloudConfiguration.getDriveRootPath());
 		dateFormat = new SimpleDateFormat(mycloudConfiguration.getDateFormat());
+		urlRootPath = mycloudConfiguration.getUrlRootPath();
+		connectTimeout = mycloudConfiguration.getConnectTimeout();
+		readTimeout = mycloudConfiguration.getReadTimeout();
+		listFileLength = mycloudConfiguration.getListFileLength();
+		pagesLength = mycloudConfiguration.getPagesLength();
+		abstractTaskExecutes = new LinkedBlockingQueue<>();
 	}
 	
 	@Override
-	public void addFilePackageTask(File tmpFile, Date pathDate, String description, String contentType) {
-		abstractTaskExecutes.offer(new FileTask(tmpFile, pathDate, description, contentType, driveRootFolder, dateFormat, filePackageDao));
+	public void addFile(File tmpFile, Date pathDate, String description, String contentType) {
+		AbstractTaskExecute abstractTaskExecute = new FileTask(tmpFile, pathDate, description, contentType, driveRootFolder, dateFormat, filePackageDao);
+		abstractTaskExecutes.offer(abstractTaskExecute);
+		logger.info("addFile: " + abstractTaskExecute);
 	}
 	
 	@Override
-	public void addFilePackageTask(String httpUrl, Date pathDate, String description) {
-		abstractTaskExecutes.offer(
-				new HttpTask(
-						httpUrl,
-						pathDate,
-						description,
-						driveRootFolder,
-						dateFormat,
-						mycloudConfiguration.getConnectTimeout(),
-						mycloudConfiguration.getReadTimeout(),
-						filePackageDao));
+	public void addHttpUrl(String httpUrl, Date pathDate, String description) {
+		AbstractTaskExecute abstractTaskExecute = new HttpTask(httpUrl.trim(), pathDate, description, driveRootFolder, dateFormat, connectTimeout, readTimeout, filePackageDao);
+		abstractTaskExecutes.offer(abstractTaskExecute);
+		logger.info("addHttpUrl: " + abstractTaskExecute);
 	}
 	
 	@Override
-	public boolean removeFilePackage(String id) {
-		return filePackageDao.deleteFilePackage(
-				new FilePackage(
-						null,
-						null,
-						null,
-						id,
-						null,
-						null,
-						null,
-						null));
+	public boolean removeFilePackageById(String id) {
+		FilePackage filePackage = new FilePackage(null, null, null, id, null, null, null, null);
+		boolean b = filePackageDao.deleteFilePackage(filePackage);
+		logger.info("removeFilePackageById: " + b + " : " + filePackage);
+		return b;
 	}
 	
 	@Override
-	public boolean removeFilePackage(Date pathDate, String filename) {
-		return filePackageDao.deleteFilePackage(
-				new FilePackage(
-						new File(filename),
-						pathDate,
-						null,
-						null,
-						null,
-						null,
-						null,
-						null));
+	public boolean removeFilePackageByInfo(Date pathDate, String filename) {
+		FilePackage filePackage = new FilePackage(new File(filename), pathDate, null, null, null, null, null, null);
+		boolean b = filePackageDao.deleteFilePackage(filePackage);
+		logger.info("removeFilePackageByInfo: " + b + " : " + filePackage);
+		return b;
 	}
 	
 	@Override
 	public Page[] createFilePackagePages(int page) {
 		int count = filePackageDao.selectFilePackageCount();
-		int len = mycloudConfiguration.getListFileLength();
-		return createPages(page, count, len);
+		int len = listFileLength;
+		return PageUtil.createPages(page, count, len, pagesLength);
 	}
 	
 	@Override
-	public FilePackage findFilePackage(String id) {
+	public FilePackage findFilePackageById(String id) {
 		return filePackageDao.selectFilePackageInfo(
-				new FilePackage(
-						null,
-						null,
-						null,
-						id,
-						null,
-						null,
-						null,
-						null));
+				new FilePackage(null, null, null, id, null, null, null, null));
 	}
 	
 	@Override
-	public FilePackage findFilePackage(Date pathDate, String filename) {
+	public FilePackage findFilePackageByInfo(Date pathDate, String filename) {
 		return filePackageDao.selectFilePackageInfo(
-				new FilePackage(
-						new File(filename),
-						pathDate,
-						null,
-						null,
-						null,
-						null,
-						null,
-						null));
+				new FilePackage(new File(filename), pathDate, null, null, null, null, null, null));
 	}
 	
 	@Override
 	public FilePackage[] findFilePackages(int page) {
-		int len = mycloudConfiguration.getListFileLength();
+		int len = listFileLength;
 		int off = (page - 1) * len;
 		return filePackageDao.selectFilePackageInfos(off, len);
 	}
 	
 	@Override
+	public void backupFilePackageById(String id) {
+		AbstractTaskExecute abstractTaskExecute = new BackupTask(id, filePackageDao);
+		abstractTaskExecutes.add(abstractTaskExecute);
+		logger.info("backupFilePackageById: " + abstractTaskExecute);
+	}
+	
+	@Override
+	public void backupFilePackageByInfo(Date pathDate, String filename) {
+		AbstractTaskExecute abstractTaskExecute = new BackupTask(filename, pathDate, driveRootFolder, dateFormat, filePackageDao);
+		abstractTaskExecutes.add(abstractTaskExecute);
+		logger.info("backupFilePackageByInfo: " + abstractTaskExecute);
+	}
+	
+	@Override
+	public void backupAllFilePackage() {
+		List<File> files = FileUtil.getAllFileFromFolder(driveRootFolder);
+		if (files != null) {
+			for (File file : files) {
+				AbstractTaskExecute abstractTaskExecute = new BackupTask(FilePackageUtil.createFilePackage(driveRootFolder, dateFormat, file, urlRootPath), filePackageDao);
+				abstractTaskExecutes.add(abstractTaskExecute);
+				logger.info("backupAllFilePackage: " + abstractTaskExecute);
+			}
+		}
+	}
+	
+	@Override
+	public void restoreFilePackageById(String id) {
+		AbstractTaskExecute abstractTaskExecute = new RestoreTask(id, filePackageDao);
+		abstractTaskExecutes.add(abstractTaskExecute);
+		logger.info("restoreFilePackageById: " + abstractTaskExecute);
+	}
+	
+	@Override
+	public void restoreFilePackageByInfo(Date pathDate, String filename) {
+		AbstractTaskExecute abstractTaskExecute = new RestoreTask(filename, pathDate, filePackageDao);
+		abstractTaskExecutes.add(abstractTaskExecute);
+		logger.info("restoreFilePackageByInfo: " + abstractTaskExecute);
+	}
+	
+	@Override
+	public void restoreAllFilePackage() {
+		FilePackage[] filePackages = filePackageDao.selectAllFilePackageInfo();
+		for (FilePackage filePackage : filePackages) {
+			AbstractTaskExecute abstractTaskExecute = new RestoreTask(filePackage, filePackageDao);
+			abstractTaskExecutes.add(abstractTaskExecute);
+			logger.info("restoreAllFilePackage: " + abstractTaskExecute);
+		}
+	}
+	
+	@Override
 	public Page[] createTaskPages(int page) {
 		int count = logDao.selectTaskCount();
-		int len = mycloudConfiguration.getListFileLength();
-		return createPages(page, count, len);
+		int len = listFileLength;
+		return PageUtil.createPages(page, count, len, pagesLength);
 	}
 	
 	@Override
 	public Task[] findTasks(int page) {
-		int len = mycloudConfiguration.getListFileLength();
+		int len = listFileLength;
 		int off = (page - 1) * len;
 		return logDao.selectTasks(off, len);
 	}
 	
 	@Scheduled(fixedDelay = 1)
-	private void executeTask() {
+	public void executeTask() {
 		AbstractTaskExecute abstractTaskExecute;
 		while ((abstractTaskExecute = abstractTaskExecutes.poll()) != null) {
 			abstractTaskExecute.executeTask();
 			logDao.insertTask(abstractTaskExecute);
-			System.out.println(abstractTaskExecute);
+			logger.info("executeTask: " + abstractTaskExecute);
 		}
-	}
-	
-	private final Page[] createPages(int page, int count, int len) {
-		int pageCount;
-		if (count % len == 0) {
-			pageCount = count / len;
-		} else {
-			pageCount = (count / len) + 1;
-		}
-		int pagesLength = mycloudConfiguration.getPagesLength();
-		int start = page - (pagesLength / 2);
-		int end = page + (pagesLength / 2);
-		if (start < 1) {
-			start = 1;
-		}
-		if (pageCount < 1) {
-			pageCount = 1;
-		}
-		if (end > pageCount) {
-			end = pageCount;
-		}
-		Page[] pages = new Page[end - start + 3];
-		pages[0] = new Page("首页", "1", page == 1);
-		pages[pages.length - 1] = new Page("尾页", pageCount + "", page == pageCount);
-		for (int i = 1; i < pages.length - 1; i++) {
-			pages[i] = new Page((start + i - 1) + "", (start + i - 1) + "", page == (start + i - 1));
-		}
-		return pages;
 	}
 }

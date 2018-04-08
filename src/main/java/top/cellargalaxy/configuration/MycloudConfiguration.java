@@ -3,9 +3,6 @@ package top.cellargalaxy.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 /**
  * Created by cellargalaxy on 18-4-6.
  */

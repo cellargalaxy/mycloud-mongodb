@@ -3,7 +3,7 @@ package top.cellargalaxy.service;
 import org.springframework.stereotype.Service;
 import top.cellargalaxy.bean.controlor.Page;
 import top.cellargalaxy.bean.dao.FilePackage;
-import top.cellargalaxy.bean.service.Task;
+import top.cellargalaxy.bean.dao.Task;
 
 import java.io.File;
 import java.util.Date;
@@ -13,21 +13,33 @@ import java.util.Date;
  */
 @Service
 public interface Mycloud {
-	void addFilePackageTask(File tmpFile, Date pathDate, String description, String contentType);
+	void addFile(File tmpFile, Date pathDate, String description, String contentType);
 	
-	void addFilePackageTask(String httpUrl, Date pathDate, String description);
+	void addHttpUrl(String httpUrl, Date pathDate, String description);
 	
-	boolean removeFilePackage(String id);
+	boolean removeFilePackageById(String id);
 	
-	boolean removeFilePackage(Date pathDate, String filename);
+	boolean removeFilePackageByInfo(Date pathDate, String filename);
 	
 	Page[] createFilePackagePages(int page);
 	
-	FilePackage findFilePackage(String id);
+	FilePackage findFilePackageById(String id);
 	
-	FilePackage findFilePackage(Date pathDate, String filename);
+	FilePackage findFilePackageByInfo(Date pathDate, String filename);
 	
 	FilePackage[] findFilePackages(int page);
+	
+	void backupFilePackageById(String id);
+	
+	void backupFilePackageByInfo(Date pathDate, String filename);
+	
+	void backupAllFilePackage();
+	
+	void restoreFilePackageById(String id);
+	
+	void restoreFilePackageByInfo(Date pathDate, String filename);
+	
+	void restoreAllFilePackage();
 	
 	Page[] createTaskPages(int page);
 	

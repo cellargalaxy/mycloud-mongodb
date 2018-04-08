@@ -16,8 +16,8 @@ import java.util.Date;
  * Created by cellargalaxy on 18-4-7.
  */
 public class HttpTask extends AbstractTaskExecute {
-	private final static String INSERT_TASK_NAME = "新增链接";
-	private final static String UPDATE_TASK_NAME = "更新链接";
+	public final static String INSERT_TASK_NAME = "insert http url";
+	public final static String UPDATE_TASK_NAME = "update http url";
 	private final String httpUrl;
 	private final File driveRootFolder;
 	private final DateFormat dateFormat;
@@ -45,23 +45,44 @@ public class HttpTask extends AbstractTaskExecute {
 			httpURLConnection.setReadTimeout(readTimeout);
 			File pathFolder = FilePackageUtil.createPathFolder(driveRootFolder, dateFormat, getPathDate());
 			file = UrlDownloadUtil.downloadHttp(httpURLConnection, pathFolder);
+			if (file == null || !file.exists()) {
+				setSuccess(false);
+				setLog("fail download http url:" + httpUrl);
+				return;
+			}
 			FilePackage filePackage = new FilePackage(file, getPathDate(), getDescription(), null, null, httpURLConnection.getContentType(), null, null);
 			if (filePackageDao.selectFilePackageInfo(filePackage) != null) {
 				setTaskName(UPDATE_TASK_NAME);
-				setSuccess((filePackage = filePackageDao.updateFilePackage(filePackage)) != null);
+				filePackage = filePackageDao.updateFilePackage(filePackage);
 			} else {
 				setTaskName(INSERT_TASK_NAME);
-				setSuccess((filePackage = filePackageDao.insertFilePackage(filePackage)) != null);
+				filePackage = filePackageDao.insertFilePackage(filePackage);
 			}
-			if (filePackage!=null) {
+			if (filePackage != null) {
+				setSuccess(true);
 				setLog(filePackage.toString());
+			} else {
+				setSuccess(false);
+				setLog("fail upload to database");
 			}
 		} catch (Exception e) {
-			setLog(ExceptionUtil.pringException(e));
 			setSuccess(false);
+			setLog(ExceptionUtil.pringException(e));
 			if (file != null) {
 				file.delete();
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "HttpTask{" +
+				"httpUrl='" + httpUrl + '\'' +
+				", driveRootFolder=" + driveRootFolder +
+				", dateFormat=" + dateFormat +
+				", connectTimeout=" + connectTimeout +
+				", readTimeout=" + readTimeout +
+				", super=" + super.toString() +
+				'}';
 	}
 }

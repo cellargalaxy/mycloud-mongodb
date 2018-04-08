@@ -3,9 +3,8 @@ package top.cellargalaxy.dao;
 import com.mongodb.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-//import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Repository;
-import top.cellargalaxy.bean.service.Task;
+import top.cellargalaxy.bean.dao.Task;
 
 import java.util.Date;
 
@@ -15,14 +14,20 @@ import java.util.Date;
  */
 @Repository
 public class LogDaoMongo implements LogDao {
+	public static final String COLLECTION_NAME = "log";
 	private static final String TARGET_NAME_NAME = "targetName";
 	private static final String PATH_DATE_NAME = "pathDate";
 	private static final String DESCRIPTION_NAME = "description";
 	private static final String TASK_NAME_NAME = "taskName";
 	private static final String LOG_NAME = "log";
 	private static final String SUCCESS_NAME = "success";
+	private static final String DATE_NAME = "date";
+	private final DB db;
+	
 	@Autowired
-	private MongoTemplate mongoTemplate;
+	public LogDaoMongo(MongoTemplate mongoTemplate) {
+		db = mongoTemplate.getDb();
+	}
 	
 	@Override
 	public Task insertTask(Task task) {
@@ -32,24 +37,22 @@ public class LogDaoMongo implements LogDao {
 				append(DESCRIPTION_NAME, task.getDescription()).
 				append(TASK_NAME_NAME, task.getTaskName()).
 				append(LOG_NAME, task.getLog()).
+				append(DATE_NAME, task.getDate()).
 				append(SUCCESS_NAME, task.isSuccess());
-		DB db = mongoTemplate.getDb();
-		DBCollection collection = db.getCollection(Task.class.getAnnotation(org.springframework.data.mongodb.core.mapping.Document.class).collection());
+		DBCollection collection = db.getCollection(COLLECTION_NAME);
 		collection.insert(dbObject);
 		return task;
 	}
 	
 	@Override
 	public int selectTaskCount() {
-		DB db = mongoTemplate.getDb();
-		DBCollection collection = db.getCollection(Task.class.getAnnotation(org.springframework.data.mongodb.core.mapping.Document.class).collection());
+		DBCollection collection = db.getCollection(COLLECTION_NAME);
 		return (int) collection.count();
 	}
 	
 	@Override
 	public Task[] selectTasks(int off, int len) {
-		DB db = mongoTemplate.getDb();
-		DBCollection collection = db.getCollection(Task.class.getAnnotation(org.springframework.data.mongodb.core.mapping.Document.class).collection());
+		DBCollection collection = db.getCollection(COLLECTION_NAME);
 		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(PATH_DATE_NAME, -1));
 		Task[] tasks = new Task[dbCursor.size()];
 		int i = 0;
@@ -62,11 +65,12 @@ public class LogDaoMongo implements LogDao {
 	
 	private final Task dbObjectToTask(DBObject dbObject) {
 		return new Task(
-				dbObject.get(TARGET_NAME_NAME).toString(),
+				dbObject.get(TARGET_NAME_NAME) != null ? dbObject.get(TARGET_NAME_NAME).toString() : null,
 				(Date) dbObject.get(PATH_DATE_NAME),
 				dbObject.get(DESCRIPTION_NAME) != null ? dbObject.get(DESCRIPTION_NAME).toString() : null,
 				dbObject.get(TASK_NAME_NAME) != null ? dbObject.get(TASK_NAME_NAME).toString() : null,
 				dbObject.get(LOG_NAME) != null ? dbObject.get(LOG_NAME).toString() : null,
-				(Boolean) dbObject.get(SUCCESS_NAME));
+				(Boolean) dbObject.get(SUCCESS_NAME),
+				(Date) dbObject.get(DATE_NAME));
 	}
 }

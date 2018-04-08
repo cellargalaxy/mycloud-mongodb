@@ -5,14 +5,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import top.cellargalaxy.bean.service.Task;
+import top.cellargalaxy.bean.dao.Task;
 import top.cellargalaxy.service.FileTask;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.Date;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by cellargalaxy on 18-4-7.

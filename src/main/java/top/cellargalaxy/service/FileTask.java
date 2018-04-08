@@ -14,8 +14,8 @@ import java.util.Date;
  * Created by cellargalaxy on 18-4-7.
  */
 public class FileTask extends AbstractTaskExecute {
-	private final static String INSERT_TASK_NAME = "新增文件";
-	private final static String UPDATE_TASK_NAME = "更新文件";
+	public final static String INSERT_TASK_NAME = "insert file";
+	public final static String UPDATE_TASK_NAME = "update file";
 	private final File tmpFile;
 	private final String contentType;
 	private final File driveRootFolder;
@@ -33,28 +33,60 @@ public class FileTask extends AbstractTaskExecute {
 	
 	@Override
 	public void executeTask() {
+		File file = null;
 		try {
-			File file = FilePackageUtil.createFile(driveRootFolder, dateFormat, getPathDate(), tmpFile.getName());
+			if (!tmpFile.exists()) {
+				setLog("tmpFile not exists:" + tmpFile.getAbsolutePath());
+				setSuccess(false);
+				return;
+			}
+			file = FilePackageUtil.createFile(driveRootFolder, dateFormat, getPathDate(), tmpFile.getName());
 			if (!tmpFile.getAbsolutePath().equals(file.getAbsolutePath())) {
 				file.delete();
 				file.getParentFile().mkdirs();
 				tmpFile.renameTo(file);
 			}
+			if (!file.exists()) {
+				setLog("fail remove tmpFile to:" + file.getAbsolutePath());
+				setSuccess(false);
+				return;
+			}
 			FilePackage filePackage = new FilePackage(file, getPathDate(), getDescription(), null, null, contentType, null, null);
 			if (filePackageDao.selectFilePackageInfo(filePackage) != null) {
 				setTaskName(UPDATE_TASK_NAME);
-				setSuccess((filePackage = filePackageDao.updateFilePackage(filePackage)) != null);
+				filePackage = filePackageDao.updateFilePackage(filePackage);
 			} else {
 				setTaskName(INSERT_TASK_NAME);
-				setSuccess((filePackage = filePackageDao.insertFilePackage(filePackage)) != null);
+				filePackage = filePackageDao.insertFilePackage(filePackage);
 			}
 			if (filePackage != null) {
+				setSuccess(true);
 				setLog(filePackage.toString());
+			} else {
+				setSuccess(false);
+				setLog("fail upload to database");
 			}
 		} catch (Exception e) {
-			setLog(ExceptionUtil.pringException(e));
 			setSuccess(false);
-			tmpFile.delete();
+			setLog(ExceptionUtil.pringException(e));
+			if (file != null) {
+				file.delete();
+			}
+		} finally {
+			if (tmpFile != null) {
+				tmpFile.delete();
+			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "FileTask{" +
+				"tmpFile=" + tmpFile +
+				", contentType='" + contentType + '\'' +
+				", driveRootFolder=" + driveRootFolder +
+				", dateFormat=" + dateFormat +
+				", super=" + super.toString() +
+				'}';
 	}
 }
