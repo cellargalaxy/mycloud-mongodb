@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="global :: head('文件列表')"></head>
+<body>
+<div class="container">
+    <div class="row" th:include="global :: navigation"></div>
+    <div class="row" th:include="global :: addFileForm"></div>
+    <div class="row" th:include="global :: addHttpUrlForm"></div>
+    <div class="row" th:include="global :: listFile"></div>
+    <div class="row" th:replace="global :: pagination"></div>
+    <div class="row" th:replace="global :: tail"></div>
+</div>
+
+<div th:replace="global :: publicJs"></div>
+<div th:replace="global :: privateJs"></div>
+<script>
+    var listFileVue = createListFileVue();
+    var paginationVue = createPaginationVue(listFileVue, getFindFilePackagesUrl(), getCreateFilePackagePagesUrl());
+    paginationVue.flipPage(1);
+</script>
+</body>
+</html>

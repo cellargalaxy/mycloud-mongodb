@@ -11,11 +11,12 @@ import java.util.Date;
  * Created by cellargalaxy on 18-4-8.
  */
 public class RestoreTask extends AbstractTaskExecute {
+	public static final String TASK_NAME = "restore";
 	private final FilePackage filePackage;
 	private final FilePackageDao filePackageDao;
 	
 	public RestoreTask(FilePackage filePackage, FilePackageDao filePackageDao) {
-		super(filePackage.getFile().getAbsolutePath(), filePackage.getPathDate(), filePackage.getDescription(), null, null, false);
+		super(filePackage.getFile().getAbsolutePath(), filePackage.getPathDate(), filePackage.getDescription(), TASK_NAME, null, false);
 		this.filePackage = filePackage;
 		this.filePackageDao = filePackageDao;
 	}

@@ -53,7 +53,7 @@ public class LogDaoMongo implements LogDao {
 	@Override
 	public Task[] selectTasks(int off, int len) {
 		DBCollection collection = db.getCollection(COLLECTION_NAME);
-		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(PATH_DATE_NAME, -1));
+		DBCursor dbCursor = collection.find().limit(len).skip(off).sort(new BasicDBObject(DATE_NAME, -1));
 		Task[] tasks = new Task[dbCursor.size()];
 		int i = 0;
 		for (DBObject dbObject : dbCursor.toArray()) {

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="global :: head('日志列表')"></head>
+<body>
+<div class="container">
+    <div class="row" th:include="global :: navigation"></div>
+    <div class="row" th:include="global :: addFileForm"></div>
+    <div class="row" th:include="global :: addHttpUrlForm"></div>
+    <div class="row" th:include="global :: listLog"></div>
+    <div class="row" th:replace="global :: pagination"></div>
+    <div class="row" th:replace="global :: tail"></div>
+</div>
+
+<div th:replace="global :: publicJs"></div>
+<div th:replace="global :: privateJs"></div>
+<script>
+    var listLogVue = createListLogVue();
+    var paginationVue = createPaginationVue(listLogVue, getFindTasksUrl(), getCreateTaskPagesUrl());
+    paginationVue.flipPage(1);
+</script>
+</body>
+</html>

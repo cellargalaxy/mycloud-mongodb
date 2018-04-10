@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="global :: head('我的文件床 mycloud')"></head>
+<body>
+<div class="container">
+    <div class="row" th:include="global :: navigation"></div>
+    <div class="jumbotron" style="text-align: center;">
+        <h1>我的文件床mycloud的效果页面</h1>
+    </div>
+    <div class="row" th:include="global :: addFileForm"></div>
+    <div class="row" th:include="global :: addHttpUrlForm"></div>
+    <div class="row" th:include="global :: listFile"></div>
+    <div class="row" th:include="global :: listLog"></div>
+    <div class="row" th:replace="global :: pagination"></div>
+    <div class="row" th:replace="global :: tail"></div>
+</div>
+
+<div th:replace="global :: publicJs"></div>
+<div th:replace="global :: privateJs"></div>
+<script>
+    var paginationVue = createPaginationVue();
+    var pages = [
+        {
+            "name": "首页",
+            "url": "1",
+            "current": true
+        },
+        {
+            "name": "1",
+            "url": "1",
+            "current": true
+        },
+        {
+            "name": "2",
+            "url": "2",
+            "current": false
+        },
+        {
+            "name": "3",
+            "url": "3",
+            "current": false
+        },
+        {
+            "name": "尾页",
+            "url": "3",
+            "current": false
+        }
+    ];
+    paginationVue.loadData({result: true, data: pages});
+
+    var listLogVue = createListLogVue();
+    var logs = [
+        {
+            "targetName": "/root/5accdcbc773f0.jpg",
+            "pathDate": 1504886400000,
+            "description": "游戏人生",
+            "taskName": "insert file",
+            "log": "FilePackage{file=/root/5accdcbc773f0.jpg, pathDate=Sat Sep 09 00:00:00 CST 2017, filename='5accdcbc773f0.jpg', description='游戏人生', id='5accdcbc773f0', uploadDate=Sun Apr 08 23:04:44 CST 2018, length=303486, contentType='image/jpeg', md5='5accdcbc773f0', url='https://i.loli.net/2018/04/10/5accdcbc773f0.jpg'}",
+            "success": true,
+            "date": 1523201065207
+        },
+        {
+            "targetName": "/root/5accdcbcb1738.jpg",
+            "pathDate": 1504886400000,
+            "description": "少女终末旅行",
+            "taskName": "	insert http url",
+            "log": "fail download http url: https://i.loli.net/2018/04/10/5accdcbc773f0.jpg",
+            "success": false,
+            "date": 1523201065207
+        }
+    ];
+    listLogVue.loadData({result: true, data: logs});
+
+    var listFileVue = createListFileVue();
+    var files = [
+        {
+            "file": "/root/5accdcbc773f0.jpg",
+            "pathDate": 1504886400000,
+            "filename": "5accdcbc773f0.jpg",
+            "description": "游戏人生",
+            "id": "5accdcbc773f0",
+            "uploadDate": 1523199884051,
+            "length": 311057,
+            "contentType": "image/jpeg",
+            "md5": "c6fc17759a72c90a9c16cc62dd0bb8f1",
+            "url": "https://i.loli.net/2018/04/10/5accdcbc773f0.jpg"
+        },
+        {
+            "file": "/root/5accdcbcb1738.jpg",
+            "pathDate": 1504886400000,
+            "filename": "5accdcbcb1738.jpg",
+            "description": "少女终末旅行",
+            "id": "5accdcbcb1738",
+            "uploadDate": 1523199884068,
+            "length": 293388,
+            "contentType": "image/jpeg",
+            "md5": "2b9b46fc176195a9d80ea0c205e2915e",
+            "url": "https://i.loli.net/2018/04/10/5accdcbcb1738.jpg"
+        }
+    ];
+    listFileVue.loadData({result: true, data: files});
+</script>
+</body>
+</html>

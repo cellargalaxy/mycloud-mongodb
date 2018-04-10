@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MycloudConfiguration {
-	@Value("${token:mycloud}")
-	private String token;
+	@Value("${username:mycloud}")
+	private String username;
+	@Value("${password:mycloud}")
+	private String password;
 	@Value("${listFileLength:10}")
 	private int listFileLength;
 	@Value("${pagesLength:6}")
@@ -25,12 +27,20 @@ public class MycloudConfiguration {
 	@Value("${readTimeout:10000}")
 	private int readTimeout;
 	
-	public String getToken() {
-		return token;
+	public String getUsername() {
+		return username;
 	}
 	
-	public void setToken(String token) {
-		this.token = token;
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 	public int getListFileLength() {
