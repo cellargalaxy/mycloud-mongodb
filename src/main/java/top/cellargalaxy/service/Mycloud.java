@@ -17,6 +17,8 @@ public interface Mycloud {
 	
 	void addHttpUrl(String httpUrl, Date pathDate, String description);
 	
+	void synchronize();
+	
 	boolean removeFilePackageById(String id);
 	
 	boolean removeFilePackageByInfo(Date pathDate, String filename);

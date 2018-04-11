@@ -1,5 +1,6 @@
 package top.cellargalaxy.service;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import top.cellargalaxy.util.FilePackageUtil;
 import top.cellargalaxy.util.FileUtil;
 import top.cellargalaxy.util.PageUtil;
 
-import java.io.File;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -111,14 +112,14 @@ public class MycloudImpl implements Mycloud {
 	
 	@Override
 	public void backupFilePackageById(String id) {
-		AbstractTaskExecute abstractTaskExecute = new BackupTask(id, filePackageDao);
+		AbstractTaskExecute abstractTaskExecute = new BackupTask(BackupTask.USER_BACKUP_NAME, id, filePackageDao);
 		abstractTaskExecutes.add(abstractTaskExecute);
 		logger.info("backupFilePackageById: " + abstractTaskExecute);
 	}
 	
 	@Override
 	public void backupFilePackageByInfo(Date pathDate, String filename) {
-		AbstractTaskExecute abstractTaskExecute = new BackupTask(filename, pathDate, driveRootFolder, dateFormat, filePackageDao);
+		AbstractTaskExecute abstractTaskExecute = new BackupTask(BackupTask.USER_BACKUP_NAME, filename, pathDate, driveRootFolder, dateFormat, filePackageDao);
 		abstractTaskExecutes.add(abstractTaskExecute);
 		logger.info("backupFilePackageByInfo: " + abstractTaskExecute);
 	}
@@ -128,7 +129,7 @@ public class MycloudImpl implements Mycloud {
 		List<File> files = FileUtil.getAllFileFromFolder(driveRootFolder);
 		if (files != null) {
 			for (File file : files) {
-				AbstractTaskExecute abstractTaskExecute = new BackupTask(FilePackageUtil.createFilePackage(driveRootFolder, dateFormat, file, urlRootPath), filePackageDao);
+				AbstractTaskExecute abstractTaskExecute = new BackupTask(BackupTask.USER_BACKUP_NAME, FilePackageUtil.createFilePackage(driveRootFolder, dateFormat, file, urlRootPath), filePackageDao);
 				abstractTaskExecutes.add(abstractTaskExecute);
 				logger.info("backupAllFilePackage: " + abstractTaskExecute);
 			}
@@ -137,14 +138,14 @@ public class MycloudImpl implements Mycloud {
 	
 	@Override
 	public void restoreFilePackageById(String id) {
-		AbstractTaskExecute abstractTaskExecute = new RestoreTask(id, filePackageDao);
+		AbstractTaskExecute abstractTaskExecute = new RestoreTask(RestoreTask.USER_RESTORE_NAME, id, filePackageDao);
 		abstractTaskExecutes.add(abstractTaskExecute);
 		logger.info("restoreFilePackageById: " + abstractTaskExecute);
 	}
 	
 	@Override
 	public void restoreFilePackageByInfo(Date pathDate, String filename) {
-		AbstractTaskExecute abstractTaskExecute = new RestoreTask(filename, pathDate, filePackageDao);
+		AbstractTaskExecute abstractTaskExecute = new RestoreTask(RestoreTask.USER_RESTORE_NAME, filename, pathDate, filePackageDao);
 		abstractTaskExecutes.add(abstractTaskExecute);
 		logger.info("restoreFilePackageByInfo: " + abstractTaskExecute);
 	}
@@ -153,7 +154,7 @@ public class MycloudImpl implements Mycloud {
 	public void restoreAllFilePackage() {
 		FilePackage[] filePackages = filePackageDao.selectAllFilePackageInfo();
 		for (FilePackage filePackage : filePackages) {
-			AbstractTaskExecute abstractTaskExecute = new RestoreTask(filePackage, filePackageDao);
+			AbstractTaskExecute abstractTaskExecute = new RestoreTask(RestoreTask.USER_RESTORE_NAME, filePackage, filePackageDao);
 			abstractTaskExecutes.add(abstractTaskExecute);
 			logger.info("restoreAllFilePackage: " + abstractTaskExecute);
 		}
@@ -180,6 +181,45 @@ public class MycloudImpl implements Mycloud {
 			abstractTaskExecute.executeTask();
 			logDao.insertTask(abstractTaskExecute);
 			logger.info("executeTask: " + abstractTaskExecute);
+		}
+	}
+	
+	@Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+	public void synchronize() {
+		FilePackage[] filePackages = filePackageDao.selectAllFilePackageInfo();
+		if (filePackages == null) {
+			return;
+		}
+		List<File> files = FileUtil.getAllFileFromFolder(driveRootFolder);
+		for (FilePackage filePackage : filePackages) {
+			if (filePackage.getFile() != null && filePackage.getFile().exists()) {
+				try (InputStream inputStream = new BufferedInputStream(new FileInputStream(filePackage.getFile()))) {
+					String md5 = DigestUtils.md5Hex(inputStream);
+					if (md5 != null && md5.equals(filePackage.getMd5())) {
+						continue;
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			AbstractTaskExecute abstractTaskExecute = new RestoreTask(RestoreTask.AUTO_RESTORE_NAME, filePackage, filePackageDao);
+			abstractTaskExecutes.add(abstractTaskExecute);
+			logger.info("synchronize restore: " + abstractTaskExecute);
+		}
+		if (files == null) {
+			return;
+		}
+		main:
+		for (File file : files) {
+			for (FilePackage filePackage : filePackages) {
+				if (filePackage.getFile() != null && filePackage.getFile().getAbsolutePath().equals(file.getAbsolutePath())) {
+					continue main;
+				}
+			}
+			file.delete();
+			logger.info("synchronize delete: " + file);
 		}
 	}
 }

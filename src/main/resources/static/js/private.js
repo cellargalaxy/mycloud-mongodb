@@ -5,6 +5,7 @@ var createFilePackagePagesUrl = null;
 var findFilePackagesUrl = null;
 var createTaskPagesUrl = null;
 var findTasksUrl = null;
+var synchronizeUrl = null;
 var restoreFilePackageByIdUrl = null;
 var backupFilePackageByIdUrl = null;
 var removeFilePackageByIdUrl = null;
@@ -34,6 +35,12 @@ function getFindTasksUrl() {
         findTasksUrl = $("#findTasks").attr("value");
     }
     return findTasksUrl;
+}
+function getSynchronizeUrl() {
+    if (synchronizeUrl == null || synchronizeUrl == '') {
+        synchronizeUrl = $("#synchronize").attr("value");
+    }
+    return synchronizeUrl;
 }
 function getRestoreFilePackageByIdUrl() {
     if (restoreFilePackageByIdUrl == null || restoreFilePackageByIdUrl == '') {
@@ -67,69 +74,6 @@ function getRestoreAllFilePackageUrl() {
 }
 ////////////////////////////////////////////////////////////////////////////
 
-function createListFileVue() {
-    var listFileVue = new Vue({
-        el: '#listFile',
-        data: {
-            files: []
-        },
-        methods: {
-            restore: function (id, filename) {
-                restore(id, filename);
-            },
-            backup: function (id, filename) {
-                backup(id, filename);
-            },
-            remove: function (id, filename) {
-                remove(id, filename);
-            },
-            loadData: function (data) {
-                if (data.result) {
-                    this.files = data.data;
-                }
-            }
-        }
-    });
-    return listFileVue;
-}
-function createListLogVue() {
-    var listLogVue = new Vue({
-        el: '#listLog',
-        data: {
-            logs: []
-        },
-        methods: {
-            loadData: function (data) {
-                if (data.result) {
-                    this.logs = data.data;
-                }
-            }
-        }
-    });
-    return listLogVue;
-}
-function createPaginationVue(vue, getInfoUrl, getPagesUrl) {
-    var paginationVue = new Vue({
-        el: '#pagination',
-        data: {
-            pages: [], vue: vue, getInfoUrl: getInfoUrl, getPagesUrl: getPagesUrl
-        },
-        methods: {
-            flipPage: function (page) {
-                getInfoByPage(page, this.getInfoUrl, vue);
-                getInfoByPage(page, this.getPagesUrl, this);
-            },
-            loadData: function (data) {
-                if (data.result) {
-                    this.pages = data.data;
-                }
-            }
-        }
-    });
-    return paginationVue;
-}
-
-///////////////////////////////////////////////////////////////////
 function getInfoByPage(page, url, vue) {
     $.ajax({
         url: url,
@@ -226,6 +170,28 @@ function restore(id, filename) {
 }
 function remove(id, filename) {
     operateFile(id, filename, "确认删除文件?: ", getRemoveFilePackageByIdUrl());
+}
+
+function synchronize() {
+    $.ajax({
+        url: getSynchronizeUrl(),
+        type: 'post',
+        data: {},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+
+        error: function () {
+            alert("网络错误!");
+        },
+        success: function (data) {
+            if (data.result) {
+                alert(data.data);
+                location.reload();
+            } else {
+                alert(data.data);
+            }
+        }
+    });
 }
 
 function backupAll() {

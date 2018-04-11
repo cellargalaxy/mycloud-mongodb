@@ -43,6 +43,13 @@ public class ApiControlor {
 		return new ReturnBean(true, "已添加到队列：" + httpUrl);
 	}
 	
+	@PostMapping("/synchronize")
+	@ResponseBody
+	public ReturnBean synchronize() {
+		mycloud.synchronize();
+		return new ReturnBean(true, "已开始进行同步");
+	}
+	
 	@PostMapping("/removeFilePackageById")
 	@ResponseBody
 	public ReturnBean removeFilePackageById(@RequestParam(value = "id") String id) {

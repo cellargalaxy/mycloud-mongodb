@@ -11,6 +11,20 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
     <link th:href="@{/image/favicon.ico}" href="/mycloudmongo/static/image/favicon.ico" rel="shortcut icon"
           type="image/ico"/>
+    <style>
+        .top {
+            position: fixed;
+            display: block;
+            right: 50px;
+            bottom: 50px;
+            width: 3em;
+            text-align: center;
+            line-height: 3em;
+            font-size: 1.5em;
+            border-radius: 100%;
+            background-color: rgba(220,220,220, 0.8);
+        }
+    </style>
     <title th:text="${title}">global</title>
 </head>
 <body>
@@ -29,12 +43,22 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <button th:onclick="'javascript:restoreAll();'"
-                                class="btn btn-info navbar-btn">全部<b>恢复</b></button>
+                        <button th:onclick="'javascript:try{synchronize();}catch(err){alert(\'发生了一个异常:\n\'+err);}'"
+                                class="btn btn-info navbar-btn">
+                            同步<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                        </button>
                     </li>
                     <li>
-                        <button th:onclick="'javascript:backupAll();'"
-                                class="btn btn-warning navbar-btn">全部<b>备份</b></button>
+                        <button th:onclick="'javascript:try{restoreAll();}catch(err){alert(\'发生了一个异常:\n\'+err);}'"
+                                class="btn btn-info navbar-btn">
+                            全部<b>恢复</b><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                        </button>
+                    </li>
+                    <li>
+                        <button th:onclick="'javascript:try{backupAll();}catch(err){alert(\'发生了一个异常:\n\'+err);}'"
+                                class="btn btn-warning navbar-btn">
+                            全部<b>备份</b><span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                        </button>
                     </li>
                     <li><p class="navbar-text">我的文件床 mycloud</p></li>
                 </ul>
@@ -72,7 +96,9 @@
             <div class="form-group">
                 <div class="col-sm-10"></div>
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-default" onclick="uploadFile()">上传</button>
+                    <button type="submit" class="btn btn-default"
+                            onclick="try{uploadFile();}catch(err){alert('发生了一个异常:\n'+err);}">上传
+                    </button>
                 </div>
             </div>
         </form>
@@ -107,7 +133,9 @@
             <div class="form-group">
                 <div class="col-sm-10"></div>
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-default" onclick="uploadHttpUrl()">上传</button>
+                    <button type="submit" class="btn btn-default"
+                            onclick="try{uploadHttpUrl();}catch(err){alert('发生了一个异常:\n'+err);}">上传
+                    </button>
                 </div>
             </div>
         </form>
@@ -171,13 +199,14 @@
                             <td>操作</td>
                             <td>
                                 <button v-on:click="restore(file.id,file.filename)" type="button" class="btn btn-info">
-                                    恢复
+                                    恢复<span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                                 </button>
                                 <button v-on:click="backup(file.id,file.filename)" type="button"
-                                        class="btn btn-warning">备份
+                                        class="btn btn-warning">
+                                    备份<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
                                 </button>
                                 <button v-on:click="remove(file.id,file.filename)" type="button" class="btn btn-danger">
-                                    删除
+                                    删除<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                 </button>
                             </td>
                         </tr>
@@ -277,7 +306,7 @@
             <div class="form-group">
                 <div class="col-sm-10"></div>
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-default">上传</button>
+                    <button type="submit" class="btn btn-default">登录</button>
                 </div>
             </div>
         </form>
@@ -289,6 +318,10 @@
             <p>我的文件床 mycloud</p>
             <p>2018-04-10 mongodb版本</p>
         </div>
+    </div>
+
+    <div class="top" th:fragment="top">
+        <a href="#"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a>
     </div>
 
 </div>
@@ -323,84 +356,21 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
     <script th:src="@{/js/vue.js}" src="/mycloudmongo/static/js/vue.js"></script>
+    <script th:src="@{/js/public.js}" src="/mycloudmongo/static/js/public.js"></script>
 </div>
 <div th:fragment="privateJs">
     <script th:src="@{/js/private.js}" src="/mycloudmongo/static/js/private.js"></script>
+
     <input th:value="@{/api/createFilePackagePages}" id="createFilePackagePages" type="hidden"/>
     <input th:value="@{/api/findFilePackages}" id="findFilePackages" type="hidden"/>
     <input th:value="@{/api/createTaskPages}" id="createTaskPages" type="hidden"/>
     <input th:value="@{/api/findTasks}" id="findTasks" type="hidden"/>
+    <input th:value="@{/api/synchronize}" id="synchronize" type="hidden"/>
     <input th:value="@{/api/restoreFilePackageById}" id="restoreFilePackageById" type="hidden"/>
     <input th:value="@{/api/backupFilePackageById}" id="backupFilePackageById" type="hidden"/>
     <input th:value="@{/api/removeFilePackageById}" id="removeFilePackageById" type="hidden"/>
     <input th:value="@{/api/backupAllFilePackage}" id="backupAllFilePackage" type="hidden"/>
     <input th:value="@{/api/restoreAllFilePackage}" id="restoreAllFilePackage" type="hidden"/>
-    <script>
-        var createFilePackagePagesUrl = null;
-        var findFilePackagesUrl = null;
-        var createTaskPagesUrl = null;
-        var findTasksUrl = null;
-        var restoreFilePackageByIdUrl = null;
-        var backupFilePackageByIdUrl = null;
-        var removeFilePackageByIdUrl = null;
-        var backupAllFilePackageUrl = null;
-        var restoreAllFilePackageUrl = null;
-
-        function createFilePackagePagesUrl() {
-            if (createFilePackagePagesUrl == null || createFilePackagePagesUrl == '') {
-                createFilePackagePagesUrl = $("#createFilePackagePages").attr("value");
-            }
-            return createFilePackagePagesUrl;
-        }
-        function findFilePackagesUrl() {
-            if (findFilePackagesUrl == null || findFilePackagesUrl == '') {
-                findFilePackagesUrl = $("#findFilePackages").attr("value");
-            }
-            return findFilePackagesUrl;
-        }
-        function createTaskPagesUrl() {
-            if (createTaskPagesUrl == null || createTaskPagesUrl == '') {
-                createTaskPagesUrl = $("#createTaskPages").attr("value");
-            }
-            return createTaskPagesUrl;
-        }
-        function findTasksUrl() {
-            if (findTasksUrl == null || findTasksUrl == '') {
-                findTasksUrl = $("#findTasks").attr("value");
-            }
-            return findTasksUrl;
-        }
-        function restoreFilePackageByIdUrl() {
-            if (restoreFilePackageByIdUrl == null || restoreFilePackageByIdUrl == '') {
-                restoreFilePackageByIdUrl = $("#restoreFilePackageById").attr("value");
-            }
-            return restoreFilePackageByIdUrl;
-        }
-        function backupFilePackageByIdUrl() {
-            if (backupFilePackageByIdUrl == null || backupFilePackageByIdUrl == '') {
-                backupFilePackageByIdUrl = $("#backupFilePackageById").attr("value");
-            }
-            return backupFilePackageByIdUrl;
-        }
-        function removeFilePackageByIdUrl() {
-            if (removeFilePackageByIdUrl == null || removeFilePackageByIdUrl == '') {
-                removeFilePackageByIdUrl = $("#removeFilePackageById").attr("value");
-            }
-            return removeFilePackageByIdUrl;
-        }
-        function backupAllFilePackageUrl() {
-            if (backupAllFilePackageUrl == null || backupAllFilePackageUrl == '') {
-                backupAllFilePackageUrl = $("#backupAllFilePackage").attr("value");
-            }
-            return backupAllFilePackageUrl;
-        }
-        function restoreAllFilePackageUrl() {
-            if (restoreAllFilePackageUrl == null || restoreAllFilePackageUrl == '') {
-                restoreAllFilePackageUrl = $("#restoreAllFilePackage").attr("value");
-            }
-            return restoreAllFilePackageUrl;
-        }
-    </script>
 </div>
 <script>
     var paginationVue = createPaginationVue();
@@ -436,20 +406,20 @@
     var listLogVue = createListLogVue();
     var logs = [
         {
-            "targetName": "/home/cellargalaxy/tmpFile/tmp/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111627.715.jpg",
+            "targetName": "/root/5accdcbc773f0.jpg",
             "pathDate": 1504886400000,
-            "description": null,
-            "taskName": null,
-            "log": "FilePackage{file=/home/cellargalaxy/tmpFile/tmp/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111627.715.jpg, pathDate=Sat Sep 09 00:00:00 CST 2017, filename='Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111627.715.jpg', description='null', id='5aca2f8c9e56fe24a801f513', uploadDate=Sun Apr 08 23:04:44 CST 2018, length=303486, contentType='null', md5='8a4d4a503c40ca85242fddc489dbb17d', url='http://drive.cellargalaxy.top/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111627.715.jpg'}",
+            "description": "游戏人生",
+            "taskName": "insert file",
+            "log": "FilePackage{file=/root/5accdcbc773f0.jpg, pathDate=Sat Sep 09 00:00:00 CST 2017, filename='5accdcbc773f0.jpg', description='游戏人生', id='5accdcbc773f0', uploadDate=Sun Apr 08 23:04:44 CST 2018, length=303486, contentType='image/jpeg', md5='5accdcbc773f0', url='https://i.loli.net/2018/04/10/5accdcbc773f0.jpg'}",
             "success": true,
             "date": 1523201065207
         },
         {
-            "targetName": "/home/cellargalaxy/tmpFile/tmp/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111936.987.jpg",
+            "targetName": "/root/5accdcbcb1738.jpg",
             "pathDate": 1504886400000,
-            "description": null,
-            "taskName": null,
-            "log": "FilePackage{file=/home/cellargalaxy/tmpFile/tmp/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111936.987.jpg, pathDate=Sat Sep 09 00:00:00 CST 2017, filename='Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111936.987.jpg', description='null', id='5aca2f8c9e56fe24a801f517', uploadDate=Sun Apr 08 23:04:44 CST 2018, length=194772, contentType='null', md5='20571636c52f1cad39d82c0729d1e582', url='http://drive.cellargalaxy.top/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111936.987.jpg'}",
+            "description": "少女终末旅行",
+            "taskName": "	insert http url",
+            "log": "fail download http url: https://i.loli.net/2018/04/10/5accdcbc773f0.jpg",
             "success": false,
             "date": 1523201065207
         }
@@ -459,28 +429,28 @@
     var listFileVue = createListFileVue();
     var files = [
         {
-            "file": "/home/cellargalaxy/tmpFile/tmp/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111941.907.jpg",
+            "file": "/root/5accdcbc773f0.jpg",
             "pathDate": 1504886400000,
-            "filename": "Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111941.907.jpg",
-            "description": null,
-            "id": "5aca2f8c9e56fe24a801f508",
+            "filename": "5accdcbc773f0.jpg",
+            "description": "游戏人生",
+            "id": "5accdcbc773f0",
             "uploadDate": 1523199884051,
             "length": 311057,
-            "contentType": null,
+            "contentType": "image/jpeg",
             "md5": "c6fc17759a72c90a9c16cc62dd0bb8f1",
-            "url": "http://drive.cellargalaxy.top/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111941.907.jpg"
+            "url": "https://i.loli.net/2018/04/10/5accdcbc773f0.jpg"
         },
         {
-            "file": "/home/cellargalaxy/tmpFile/tmp/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111752.334.jpg",
+            "file": "/root/5accdcbcb1738.jpg",
             "pathDate": 1504886400000,
-            "filename": "Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111752.334.jpg",
-            "description": null,
-            "id": "5aca2f8c9e56fe24a801f50c",
+            "filename": "5accdcbcb1738.jpg",
+            "description": "少女终末旅行",
+            "id": "5accdcbcb1738",
             "uploadDate": 1523199884068,
             "length": 293388,
-            "contentType": null,
+            "contentType": "image/jpeg",
             "md5": "2b9b46fc176195a9d80ea0c205e2915e",
-            "url": "http://drive.cellargalaxy.top/201709/09/Shelter the Animation [BDrip x265 10bit 1920x1080 FLAC].mkv_20180130_111752.334.jpg"
+            "url": "https://i.loli.net/2018/04/10/5accdcbcb1738.jpg"
         }
     ];
     listFileVue.loadData({result: true, data: files});

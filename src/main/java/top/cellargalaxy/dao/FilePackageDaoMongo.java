@@ -176,6 +176,9 @@ public class FilePackageDaoMongo implements FilePackageDao {
 		if (info == null || info.getFile() == null) {
 			return null;
 		}
+		if (info.getFile().getParentFile() != null) {
+			info.getFile().getParentFile().mkdirs();
+		}
 		try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()))) {
 			gridFSDBFile.writeTo(outputStream);
 			return info;
