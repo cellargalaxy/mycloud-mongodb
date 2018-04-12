@@ -5,7 +5,7 @@
 
 	<groupId>top.cellargalaxy</groupId>
 	<artifactId>mycloudmogon</artifactId>
-	<version>my</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>mycloudmogon</name>

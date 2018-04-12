@@ -15,14 +15,27 @@
         .top {
             position: fixed;
             display: block;
-            right: 50px;
-            bottom: 50px;
+            left: 1em;
+            bottom: 1em;
             width: 3em;
             text-align: center;
             line-height: 3em;
             font-size: 1.5em;
             border-radius: 100%;
-            background-color: rgba(220,220,220, 0.8);
+            background-color: rgba(220, 220, 220, 0.8);
+        }
+
+        .bottom {
+            position: fixed;
+            display: block;
+            left: 1em;
+            top: 1em;
+            width: 3em;
+            text-align: center;
+            line-height: 3em;
+            font-size: 1.5em;
+            border-radius: 100%;
+            background-color: rgba(220, 220, 220, 0.8);
         }
     </style>
     <title th:text="${title}">global</title>
@@ -142,84 +155,119 @@
     </div>
 
 
+    <!--<div class="row" th:fragment="listFile">-->
+        <!--<table class="table table-hover" id="listFile">-->
+            <!--<caption>文件列表</caption>-->
+            <!--<thead>-->
+            <!--<tr>-->
+                <!--<th>缩略图</th>-->
+                <!--<th>信息</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--<tr v-for="file in files">-->
+                <!--<td><a :href="file.url" target="_blank"><img :alt="file.filename" :src="file.url" class="img-responsive"-->
+                                                             <!--style="max-height: 100%;max-width: 100%;min-width: 10em;"/></a>-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--<table class="table table-hover" style="background-color: rgba(0, 0, 0, 0);">-->
+                        <!--<tbody>-->
+                        <!--<tr>-->
+                            <!--<td>文件名</td>-->
+                            <!--<td><code>{{ file.filename }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>路径日期</td>-->
+                            <!--<td><code>{{ new Date(file.pathDate).format("yyyy-MM-dd") }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>链接</td>-->
+                            <!--<td><code>{{ file.url }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>文件位置</td>-->
+                            <!--<td><code>{{ file.file }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>id</td>-->
+                            <!--<td><code>{{ file.id }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>文件类型</td>-->
+                            <!--<td><code>{{ file.contentType }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>上传日期</td>-->
+                            <!--<td><code>{{ new Date(file.uploadDate).format("yyyy-MM-dd hh:mm:ss") }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>文件大小</td>-->
+                            <!--<td><code>{{ file.length }} B</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>MD5</td>-->
+                            <!--<td><code>{{ file.md5 }}</code></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>操作</td>-->
+                            <!--<td>-->
+                                <!--<button v-on:click="restore(file.id,file.filename)" type="button" class="btn btn-info">-->
+                                    <!--恢复<span class="glyphicon glyphicon-download" aria-hidden="true"></span>-->
+                                <!--</button>-->
+                                <!--<button v-on:click="backup(file.id,file.filename)" type="button"-->
+                                        <!--class="btn btn-warning">-->
+                                    <!--备份<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>-->
+                                <!--</button>-->
+                                <!--<button v-on:click="remove(file.id,file.filename)" type="button" class="btn btn-danger">-->
+                                    <!--删除<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>-->
+                                <!--</button>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>描述</td>-->
+                            <!--<td><code>{{ file.description }}</code></td>-->
+                        <!--</tr>-->
+                        <!--</tbody>-->
+                    <!--</table>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
+    <!--</div>-->
+
+
     <div class="row" th:fragment="listFile">
-        <table class="table table-hover" id="listFile">
-            <caption>文件列表</caption>
-            <thead>
-            <tr>
-                <th>缩略图</th>
-                <th>信息</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="file in files">
-                <td><a :href="file.url" target="_blank"><img :alt="file.filename" :src="file.url" class="img-responsive"
-                                                             style="max-height: 100%;max-width: 100%"/></a>
-                </td>
-                <td>
-                    <table class="table table-hover" style="background-color: rgba(0, 0, 0, 0);">
-                        <tbody>
-                        <tr>
-                            <td>文件名</td>
-                            <td><code>{{ file.filename }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>路径日期</td>
-                            <td><code>{{ new Date(file.pathDate).format("yyyy-MM-dd") }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>链接</td>
-                            <td><code>{{ file.url }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>文件位置</td>
-                            <td><code>{{ file.file }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>id</td>
-                            <td><code>{{ file.id }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>文件类型</td>
-                            <td><code>{{ file.contentType }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>上传日期</td>
-                            <td><code>{{ new Date(file.uploadDate).format("yyyy-MM-dd hh:mm:ss") }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>文件大小</td>
-                            <td><code>{{ file.length }} B</code></td>
-                        </tr>
-                        <tr>
-                            <td>MD5</td>
-                            <td><code>{{ file.md5 }}</code></td>
-                        </tr>
-                        <tr>
-                            <td>操作</td>
-                            <td>
-                                <button v-on:click="restore(file.id,file.filename)" type="button" class="btn btn-info">
-                                    恢复<span class="glyphicon glyphicon-download" aria-hidden="true"></span>
-                                </button>
-                                <button v-on:click="backup(file.id,file.filename)" type="button"
-                                        class="btn btn-warning">
-                                    备份<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
-                                </button>
-                                <button v-on:click="remove(file.id,file.filename)" type="button" class="btn btn-danger">
-                                    删除<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>描述</td>
-                            <td><code>{{ file.description }}</code></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div id="listFile">
+            <div class="col-sm-12 col-md-4" v-for="file in files">
+                <div class="thumbnail">
+                    <a :href="file.url" target="_blank"><img :alt="file.filename" :src="file.url" class="img-responsive"/></a>
+                    <div class="caption">
+                        <p>文件名: <code>{{ file.filename }}</code></p>
+                        <p>路径日期: <code>{{ new Date(file.pathDate).format("yyyy-MM-dd") }}</code></p>
+                        <p>链接: <pre><code>{{ file.url }}</code></pre></p>
+                        <p>文件位置: <code>{{ file.file }}</code></p>
+                        <p>id: <code>{{ file.id }}</code></p>
+                        <p>文件类型: <code>{{ file.contentType }}</code></p>
+                        <p>上传日期: <code>{{ new Date(file.uploadDate).format("yyyy-MM-dd hh:mm:ss") }}</code></p>
+                        <p>文件大小: <code>{{ file.length }}B</code></p>
+                        <p>MD5: <code>{{ file.md5 }}</code></p>
+                        <p>描述: <code>{{ file.description }}</code></p>
+                        <p>
+                            <button v-on:click="restore(file.id,file.filename)" type="button" class="btn btn-info">
+                                恢复<span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                            </button>
+                            <button v-on:click="backup(file.id,file.filename)" type="button"
+                                    class="btn btn-warning">
+                                备份<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                            </button>
+                            <button v-on:click="remove(file.id,file.filename)" type="button" class="btn btn-danger">
+                                删除<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -320,14 +368,19 @@
         </div>
     </div>
 
-    <div class="top" th:fragment="top">
-        <a href="#"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a>
+    <div th:fragment="top">
+        <a class="bottom" onclick="$('body').animate({scrollTop: $(document).height()}, 1000);">
+            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+        </a>
+        <a class="top" onclick="$('body').animate({scrollTop: 0}, 1000);">
+            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
+        </a>
     </div>
 
 </div>
 
 <div th:fragment="publicJs">
-    <script>
+    <script id="publicJs">
         Date.prototype.format = function (fmt) {
             var o = {
                 "M+": this.getMonth() + 1, //月份
@@ -373,6 +426,14 @@
     <input th:value="@{/api/restoreAllFilePackage}" id="restoreAllFilePackage" type="hidden"/>
 </div>
 <script>
+    /*<![CDATA[*/
+    var page = getUrlParam('page');
+    if (page != null && page != '') {
+        console.log('page: ' + page);
+    } else {
+        window.location.href = "?page=1";
+    }
+
     var paginationVue = createPaginationVue();
     var pages = [
         {
@@ -454,6 +515,7 @@
         }
     ];
     listFileVue.loadData({result: true, data: files});
+    /*]]>*/
 </script>
 
 </body>

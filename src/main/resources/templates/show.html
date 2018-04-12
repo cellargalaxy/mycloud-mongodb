@@ -18,7 +18,8 @@
 
 <div th:replace="global :: publicJs"></div>
 <script>
-    var paginationVue = createPaginationVue();
+    /*<![CDATA[*/
+    var paginationVue = createPaginationVue(null, null, null);
     var pages = [
         {
             "name": "首页",
@@ -47,6 +48,12 @@
         }
     ];
     paginationVue.loadData({result: true, data: pages});
+    var page = getUrlParam('page');
+    if (page != null && page != '') {
+        console.log('page: ' + page);
+    } else {
+        window.location.href = "?page=1";
+    }
 
     var listLogVue = createListLogVue();
     var logs = [
@@ -99,6 +106,7 @@
         }
     ];
     listFileVue.loadData({result: true, data: files});
+    /*]]>*/
 </script>
 </body>
 </html>

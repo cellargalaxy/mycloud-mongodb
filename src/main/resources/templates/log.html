@@ -15,9 +15,16 @@
 <div th:replace="global :: publicJs"></div>
 <div th:replace="global :: privateJs"></div>
 <script>
+    /*<![CDATA[*/
     var listLogVue = createListLogVue();
     var paginationVue = createPaginationVue(listLogVue, getFindTasksUrl(), getCreateTaskPagesUrl());
-    paginationVue.flipPage(1);
+    var page = getUrlParam('page');
+    if (page != null && page != '') {
+        paginationVue.loadPage(page);
+    } else {
+        window.location.href="?page=1";
+    }
+    /*]]>*/
 </script>
 </body>
 </html>

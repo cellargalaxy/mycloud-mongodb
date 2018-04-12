@@ -184,7 +184,7 @@ public class MycloudImpl implements Mycloud {
 		}
 	}
 	
-	@Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+	@Scheduled(initialDelay = 1000 * 60 * 60, fixedDelay = 1000 * 60 * 60 * 3)
 	public void synchronize() {
 		FilePackage[] filePackages = filePackageDao.selectAllFilePackageInfo();
 		if (filePackages == null) {

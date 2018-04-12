@@ -2,6 +2,13 @@
  * Created by cellargalaxy on 18-4-11.
  */
 
+function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
+////////////////////////////////////
 function createListFileVue() {
     var listFileVue = new Vue({
             el: '#listFile',
@@ -19,7 +26,9 @@ function createListFileVue() {
                 backup: function (id, filename) {
                     try {
                         backup(id, filename);
-                    }catch(err){alert('发生了一个异常:\n'+err);}
+                    } catch (err) {
+                        alert('发生了一个异常:\n' + err);
+                    }
                 }
                 ,
                 remove: function (id, filename) {
@@ -65,9 +74,14 @@ function createPaginationVue(vue, getInfoUrl, getPagesUrl) {
         },
         methods: {
             flipPage: function (page) {
+                window.location.href = "?page=" + page;
+            },
+            loadPage: function (page) {
                 try {
-                    getInfoByPage(page, this.getInfoUrl, vue);
-                    getInfoByPage(page, this.getPagesUrl, this);
+                    if (vue != null) {
+                        getInfoByPage(page, this.getInfoUrl, vue);
+                        getInfoByPage(page, this.getPagesUrl, this);
+                    }
                 } catch (err) {
                     alert('发生了一个异常:\n' + err);
                 }
