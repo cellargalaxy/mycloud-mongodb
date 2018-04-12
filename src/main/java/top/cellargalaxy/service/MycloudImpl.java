@@ -186,6 +186,7 @@ public class MycloudImpl implements Mycloud {
 	
 	@Scheduled(initialDelay = 1000 * 60 * 60, fixedDelay = 1000 * 60 * 60 * 3)
 	public void synchronize() {
+		logger.info("synchronize start");
 		FilePackage[] filePackages = filePackageDao.selectAllFilePackageInfo();
 		if (filePackages == null) {
 			return;
@@ -221,5 +222,6 @@ public class MycloudImpl implements Mycloud {
 			file.delete();
 			logger.info("synchronize delete: " + file);
 		}
+		logger.info("synchronize end");
 	}
 }
