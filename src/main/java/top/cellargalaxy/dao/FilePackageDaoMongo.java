@@ -16,6 +16,8 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by cellargalaxy on 18-4-6.
@@ -138,10 +140,17 @@ public class FilePackageDaoMongo implements FilePackageDao {
 	public FilePackage[] selectAllFilePackageInfo() {
 		DBCollection collection = db.getCollection(FILE_COLLECTION_NAME);
 		DBCursor dbCursor = collection.find();
-		FilePackage[] filePackages = new FilePackage[dbCursor.size()];
+		List<FilePackage> list = new LinkedList<>();
+		for (DBObject dbObject : dbCursor) {
+			FilePackage filePackage = dbObjectToFilePackage(dbObject);
+			if (filePackage != null) {
+				list.add(filePackage);
+			}
+		}
+		FilePackage[] filePackages = new FilePackage[list.size()];
 		int i = 0;
-		for (DBObject dbObject : dbCursor.toArray()) {
-			filePackages[i] = dbObjectToFilePackage(dbObject);
+		for (FilePackage filePackage : list) {
+			filePackages[i] = filePackage;
 			i++;
 		}
 		return filePackages;
