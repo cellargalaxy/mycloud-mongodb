@@ -34,7 +34,7 @@ public class MycloudConfiguration {
 	@Bean
 	MultipartConfigElement multipartConfigElement() {
 		MultipartConfigFactory factory = new MultipartConfigFactory();
-		factory.setLocation("~/mycloudTmp");
+		factory.setLocation("/tmp");
 		return factory.createMultipartConfig();
 	}
 
