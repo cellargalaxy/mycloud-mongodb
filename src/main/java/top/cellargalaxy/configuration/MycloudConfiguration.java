@@ -1,7 +1,11 @@
 package top.cellargalaxy.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.MultipartConfigElement;
 
 /**
  * Created by cellargalaxy on 18-4-6.
@@ -26,7 +30,14 @@ public class MycloudConfiguration {
 	private int connectTimeout;
 	@Value("${readTimeout:10000}")
 	private int readTimeout;
-	
+
+	@Bean
+	MultipartConfigElement multipartConfigElement() {
+		MultipartConfigFactory factory = new MultipartConfigFactory();
+		factory.setLocation("~/mycloudTmp");
+		return factory.createMultipartConfig();
+	}
+
 	public String getUsername() {
 		return username;
 	}
