@@ -288,10 +288,10 @@
     </div>
 
     <div th:fragment="top">
-        <a class="bottom" onclick="$('body').animate({scrollTop: $(document).height()}, 1000);">
+        <a class="bottom" onclick="$('html,body').animate({scrollTop: $(document).height()}, 1000);">
             <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
         </a>
-        <a class="top" onclick="$('body').animate({scrollTop: 0}, 1000);">
+        <a class="top" onclick="$('html,body').animate({scrollTop: 0}, 1000);">
             <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
         </a>
     </div>

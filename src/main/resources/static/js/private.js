@@ -173,25 +173,27 @@ function remove(id, filename) {
 }
 
 function synchronize() {
-    $.ajax({
-        url: getSynchronizeUrl(),
-        type: 'post',
-        data: {},
-        contentType: "application/x-www-form-urlencoded",
-        dataType: "json",
+    if (confirm("确认同步?")){
+        $.ajax({
+            url: getSynchronizeUrl(),
+            type: 'post',
+            data: {},
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "json",
 
-        error: function () {
-            alert("网络错误!");
-        },
-        success: function (data) {
-            if (data.result) {
-                alert(data.data);
-                location.reload();
-            } else {
-                alert(data.data);
+            error: function () {
+                alert("网络错误!");
+            },
+            success: function (data) {
+                if (data.result) {
+                    alert(data.data);
+                    location.reload();
+                } else {
+                    alert(data.data);
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 function backupAll() {
